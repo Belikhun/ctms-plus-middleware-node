@@ -1,0 +1,24 @@
+{
+  "name": "ctms-plus-middleware-node",
+  "version": "1.0.0",
+  "description": "CTMS+ Middleware in NodeJS",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Belikhun/ctms-plus-middleware-node.git"
+  },
+  "author": "Belikhun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Belikhun/ctms-plus-middleware-node/issues"
+  },
+  "homepage": "https://github.com/Belikhun/ctms-plus-middleware-node#readme",
+  "dependencies": {
+    "commonjs": "0.0.1",
+    "http": "0.0.1-security",
+    "node-fetch": "^2.6.6"
+  }
+}
