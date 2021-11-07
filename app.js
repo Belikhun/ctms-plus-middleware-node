@@ -13,7 +13,7 @@ const fetch = require("node-fetch");
 const { performance } = require("perf_hooks");
 
 // HTTP Server Config
-const HOSTNAME = "localhost";
+const HOSTNAME = process.env.PORT ? "0.0.0.0" : "localhost";
 const PORT = process.env.PORT || 80;
 
 // Set up some constants
