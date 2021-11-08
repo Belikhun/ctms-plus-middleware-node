@@ -11,7 +11,6 @@ const FS = require("fs");
 const { API, clog } = require("./libs");
 const fetch = require("node-fetch");
 const { performance } = require("perf_hooks");
-const { url } = require("inspector");
 
 // HTTP Server Config
 const HOSTNAME = process.env.PORT ? "0.0.0.0" : "localhost";
