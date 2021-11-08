@@ -8,16 +8,31 @@
 const HTTP = require("http");
 const URL = require("url");
 const FS = require("fs");
-const { API } = require("./libs");
+const { API, clog } = require("./libs");
 const fetch = require("node-fetch");
 const { performance } = require("perf_hooks");
+const { url } = require("inspector");
 
 // HTTP Server Config
 const HOSTNAME = process.env.PORT ? "0.0.0.0" : "localhost";
 const PORT = process.env.PORT || 80;
 
 // Set up some constants
-const IGNORE_HEADERS = ["content-length", "location", "pragma", "access-control-allow-origin", "access-control-allow-headers"]
+const IGNORE_HEADERS = [
+	"content-length",
+	"location",
+	"pragma",
+	"access-control-allow-origin",
+	"access-control-allow-headers"
+];
+
+const VERB_COLORS = {
+	"GET": "greenBright",
+	"POST": "blueBright",
+	"PUT": "magentaBright",
+	"OPTIONS": "yellowBright",
+	"DELETE": "redBright"
+};
 
 /**
  * Handle Request
@@ -35,14 +50,27 @@ const handleRequest = async (request, data, response) => {
 	try {
 		switch (requestURL.pathname) {
 			case "/api/middleware": {
+				let url = api.reqQuery("url");
+
+				clog("INFO", "⥪", {
+					text: request.socket.remoteAddress,
+					color: "cyanBright",
+					padding: 18
+				}, {
+					text: request.method,
+					color: VERB_COLORS[request.method],
+					padding: 8
+				}, {
+					text: url,
+					color: "white"
+				});
+
 				response.setHeader("Access-Control-Allow-Origin", headers.origin || "*");
 				response.setHeader("Access-Control-Allow-Credentials", "true");
 				response.setHeader("Access-Control-Allow-Headers", "Accept, Session-Cookie-Key, Session-Cookie-Value, Set-Host, Upgrade-Insecure-Requests, Set-Origin, Set-Referer");
 
 				if (request.method === "OPTIONS")
 					api.stop(0, "Options Request", 200);
-
-				let url = api.reqQuery("url");
 
 				let sessionCookieKey;
 				if (headers["session-cookie-key"]) {
@@ -133,6 +161,19 @@ const handleRequest = async (request, data, response) => {
 			}
 		
 			default: {
+				clog("WARN", {
+					text: request.socket.remoteAddress,
+					color: "yellowBright",
+					padding: 18
+				}, {
+					text: request.method,
+					color: VERB_COLORS[request.method],
+					padding: 8
+				}, {
+					text: requestURL.pathname,
+					color: "gray"
+				});
+
 				let html = FS.readFileSync("default.html", { encoding: "utf-8" });
 				response.writeHead(200);
 				response.end(html);
@@ -173,5 +214,8 @@ const server = HTTP.createServer((request, response) => {
 });
 
 server.listen(PORT, HOSTNAME, () => {
-	console.log(`Server running at http://${HOSTNAME}:${PORT}/`);
+	clog("OKAY", "Server running at", {
+		color: "blueBright",
+		text: `http://${HOSTNAME}:${PORT}/`
+	});
 });
