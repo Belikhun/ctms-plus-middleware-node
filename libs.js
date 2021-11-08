@@ -92,26 +92,18 @@ class API {
 		response.writeHead(status);
 		response.end(JSON.stringify(output, null, 4));
 
-		clog(code === 0 ? "OKAY" : "ERRR", "⥭         ", {
-			text: `[`,
-			color: "gray",
-			space: false
-		}, {
-			text: code,
+		clog(code === 0 ? "OKAY" : "ERRR", "⥭", {
+			text: code + "",
 			color: (code === 0)
 				? "cyanBright"
 				: "redBright",
-			padding: 3
+			padding: 14
 		}, {
 			text: status,
 			color: (status === 200)
 				? "greenBright"
 				: "redBright",
 			padding: 3,
-			space: false
-		}, {
-			text: `]`,
-			color: "gray"
 		}, {
 			text: runtime.toFixed(3) + "s",
 			color: "gray",
