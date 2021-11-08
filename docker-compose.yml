@@ -9,6 +9,7 @@ services:
     restart: always
     environment:
       PORT: 22075
+      FORCE_COLOR: 1
     volumes:
       - /shared:/shared
     ports:
