@@ -163,7 +163,7 @@ const handleRequest = async (request, data, response) => {
 				clog("WARN", {
 					text: request.socket.remoteAddress,
 					color: "yellowBright",
-					padding: 18
+					padding: 20
 				}, {
 					text: request.method,
 					color: VERB_COLORS[request.method],
