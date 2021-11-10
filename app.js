@@ -158,11 +158,28 @@ const handleRequest = async (request, data, response) => {
 
 				break;
 			}
+
+			case "/api/ping":
+				clog("INFO", "⥪", {
+					text: request.socket.remoteAddress,
+					color: "cyanBright",
+					padding: 18
+				}, {
+					text: request.method,
+					color: VERB_COLORS[request.method],
+					padding: 8
+				}, {
+					text: requestURL.pathname,
+					color: "yellowBright"
+				});
+
+				api.stop(0, "Pong!", 200);
+				break;
 		
 			default: {
 				clog("WARN", {
 					text: request.socket.remoteAddress,
-					color: "yellowBright",
+					color: "cyanBright",
 					padding: 20
 				}, {
 					text: request.method,
