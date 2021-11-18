@@ -8,6 +8,7 @@ services:
     user: root
     restart: always
     environment:
+      TZ: Asia/Ho_Chi_Minh
       PORT: 22075
       FORCE_COLOR: 1
     volumes:
