@@ -118,9 +118,14 @@ const handleRequest = async (request, data, response) => {
 				const controller = new AbortController();
 				let cancelTimer = setTimeout(() => {
 					controller.abort();
-					api.stop(-1, `Request to CTMS timed out after ${TIMEOUT}ms!`, 408, {
-						timeout: TIMEOUT
-					});
+
+					try {
+						api.stop(-1, `Request to CTMS timed out after ${TIMEOUT}ms!`, 408, {
+							timeout: TIMEOUT
+						});
+					} catch(e) {
+						// Just to catch the stop signal.
+					}
 				}, TIMEOUT);
 
 				let m2sStart = performance.now();
