@@ -11,10 +11,12 @@ const FS = require("fs");
 const { API, clog } = require("./libs");
 const fetch = require("node-fetch");
 const { performance } = require("perf_hooks");
+const AbortController = globalThis.AbortController;
 
 // HTTP Server Config
 const HOSTNAME = process.env.PORT ? "0.0.0.0" : "localhost";
 const PORT = process.env.PORT || 80;
+const TIMEOUT = 120000
 
 // Set up some constants
 const IGNORE_HEADERS = [
@@ -113,6 +115,8 @@ const handleRequest = async (request, data, response) => {
 						delete headers[key];
 
 				// Start request
+				const controller = new AbortController();
+				let cancelTimer = setTimeout(() => controller.abort(), TIMEOUT)
 				let m2sStart = performance.now();
 				let m2sResponse;
 
@@ -120,10 +124,13 @@ const handleRequest = async (request, data, response) => {
 					m2sResponse = await fetch(url, {
 						method: request.method,
 						headers,
-						body: data
+						body: data,
+						signal: controller.signal
 					});
 				} catch(e) {
 					api.errored(e);
+				} finally {
+					clearTimeout(cancelTimer);
 				}
 
 				let _h = [ ...m2sResponse.headers ];
