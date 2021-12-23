@@ -21,6 +21,7 @@
     "chalk": "^4.1.2",
     "commonjs": "0.0.1",
     "http": "0.0.1-security",
+    "node-abort-controller": "^3.0.1",
     "node-fetch": "^2.6.6"
   }
 }

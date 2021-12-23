@@ -11,7 +11,7 @@ const FS = require("fs");
 const { API, clog } = require("./libs");
 const fetch = require("node-fetch");
 const { performance } = require("perf_hooks");
-const AbortController = globalThis.AbortController;
+const { AbortController } = require("node-abort-controller");
 
 // HTTP Server Config
 const HOSTNAME = process.env.PORT ? "0.0.0.0" : "localhost";
@@ -116,7 +116,13 @@ const handleRequest = async (request, data, response) => {
 
 				// Start request
 				const controller = new AbortController();
-				let cancelTimer = setTimeout(() => controller.abort(), TIMEOUT)
+				let cancelTimer = setTimeout(() => {
+					controller.abort();
+					api.stop(-1, `Request to CTMS timed out after ${TIMEOUT}ms!`, 408, {
+						timeout: TIMEOUT
+					});
+				}, TIMEOUT);
+
 				let m2sStart = performance.now();
 				let m2sResponse;
 
