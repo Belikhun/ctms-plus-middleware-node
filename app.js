@@ -15,7 +15,7 @@ const { AbortController } = require("node-abort-controller");
 
 // HTTP Server Config
 const HOSTNAME = process.env.PORT ? "0.0.0.0" : "localhost";
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 21075;
 const TIMEOUT = 120000
 
 // Set up some constants
@@ -65,6 +65,11 @@ const handleRequest = async (request, data, response) => {
 					text: url,
 					color: "white"
 				});
+
+				// Check for valid hostname
+				let { hostname } = URL.parse(url, true);
+				if (!hostname || !hostname.includes("fithou.net.vn"))
+					api.stop(10, `Empty or invalid URL! Only *.fithou.net.vn are allowed.`, 400, { hostname });
 
 				response.setHeader("Access-Control-Allow-Origin", headers.origin || "*");
 				response.setHeader("Access-Control-Allow-Credentials", "true");
