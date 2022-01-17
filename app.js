@@ -47,6 +47,10 @@ const handleRequest = async (request, data, response) => {
 	let requestURL = URL.parse(request.url, true);
 	let headers = { ...request.headers };
 	let api = new API(requestURL, response);
+
+	response.setHeader("Access-Control-Allow-Origin", headers.origin || "*");
+	response.setHeader("Access-Control-Allow-Credentials", "true");
+	response.setHeader("Access-Control-Allow-Headers", "Accept, Session-Cookie-Key, Session-Cookie-Value, Set-Host, Upgrade-Insecure-Requests, Set-Origin, Set-Referer");
 	
 	try {
 		switch (requestURL.pathname) {
@@ -70,11 +74,7 @@ const handleRequest = async (request, data, response) => {
 				let { hostname } = URL.parse(url, true);
 				if (!hostname || !hostname.includes("fithou.net.vn"))
 					api.stop(10, `Empty or invalid URL! Only *.fithou.net.vn are allowed.`, 400, { hostname });
-
-				response.setHeader("Access-Control-Allow-Origin", headers.origin || "*");
-				response.setHeader("Access-Control-Allow-Credentials", "true");
-				response.setHeader("Access-Control-Allow-Headers", "Accept, Session-Cookie-Key, Session-Cookie-Value, Set-Host, Upgrade-Insecure-Requests, Set-Origin, Set-Referer");
-
+				
 				if (request.method === "OPTIONS")
 					api.stop(0, "Options Request", 200);
 
