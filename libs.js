@@ -85,12 +85,23 @@ class API {
 			runtime
 		}
 
-		response.setHeader("Content-Type", "application/json");
 		if (!response.hasHeader("Access-Control-Allow-Origin"))
 			response.setHeader("Access-Control-Allow-Origin", "*");
 
-		response.writeHead(status);
-		response.end(JSON.stringify(output, null, 4));
+		if (data && data?.response?.type) {
+			response.setHeader("Content-Type", data.response.type);
+			response.setHeader("Content-Length", data.response.size);
+			response.writeHead(status);
+			// data.response.text().then((data) => response.end(data, "binary"));
+
+			data.response.arrayBuffer().then((buffer) => {
+				response.end(Buffer.from(buffer), "binary");
+			});
+		} else {
+			response.setHeader("Content-Type", "application/json;charset=UTF-8");
+			response.writeHead(status);
+			response.end(JSON.stringify(output, null, 4));
+		}
 
 		clog(code === 0 ? "OKAY" : "ERRR", "⥭", {
 			text: code + "",
@@ -142,7 +153,7 @@ class API {
 	 * @returns {String|*}
 	 */
 	getQuery(key, isNull = null) {
-		return (typeof this.url.query[key] !== "string")
+		return (typeof this.url.query[key] === "string")
 			? this.url.query[key]
 			: isNull;
 	}

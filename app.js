@@ -56,6 +56,7 @@ const handleRequest = async (request, data, response) => {
 		switch (requestURL.pathname) {
 			case "/api/middleware": {
 				let url = api.reqQuery("url");
+				let raw = api.getQuery("raw", false);
 
 				clog("INFO", "⥪", {
 					text: request.socket.remoteAddress,
@@ -72,8 +73,8 @@ const handleRequest = async (request, data, response) => {
 
 				// Check for valid hostname
 				let { hostname } = URL.parse(url, true);
-				if (!hostname || !hostname.includes("fithou.net.vn"))
-					api.stop(10, `Empty or invalid URL! Only *.fithou.net.vn are allowed.`, 400, { hostname });
+				if (!hostname || !(hostname.includes("fithou.net.vn") || hostname.includes("fithou.edu.vn")))
+					api.stop(10, `Empty or invalid URL! Only *.fithou.net.vn or *.fithou.edu.vn are allowed.`, 400, { hostname });
 				
 				if (request.method === "OPTIONS")
 					api.stop(0, "Options Request", 200);
@@ -125,7 +126,7 @@ const handleRequest = async (request, data, response) => {
 					controller.abort();
 
 					try {
-						api.stop(-1, `Request to CTMS timed out after ${TIMEOUT}ms!`, 408, {
+						api.stop(-1, `Yêu cầu tới máy chủ CTMS hết hạn sau ${TIMEOUT}ms!`, 408, {
 							timeout: TIMEOUT
 						});
 					} catch(e) {
@@ -171,11 +172,13 @@ const handleRequest = async (request, data, response) => {
 					responseHeaders[header[0]] = header[1];
 				}
 
-				api.stop(0, "Completed", m2sResponse.status, {
+				api.stop(0, raw ? "Raw Response" : "Completed", m2sResponse.status, {
 					session: sessionCookieValue,
 					headers: responseHeaders,
 					sentHeaders: headers,
-					response: await m2sResponse.text(),
+					response: raw
+						? await m2sResponse.blob()
+						: await m2sResponse.text(),
 					time: (performance.now() - m2sStart) / 1000
 				});
 
