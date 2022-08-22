@@ -3,7 +3,6 @@ version: '2.8'
 services:
   ctmsmw:
     build: .
-    image: belivipro9x99/ctmsmw
     container_name: "ctmsmw"
     user: root
     restart: always

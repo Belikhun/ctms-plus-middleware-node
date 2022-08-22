@@ -75,7 +75,7 @@ const handleRequest = async (request, data, response) => {
 				});
 
 				// Check for valid hostname
-				let { hostname } = URL.parse(url, true);
+				let { hostname, protocol } = URL.parse(url, true);
 				if (!hostname || !(hostname.includes("fithou.net.vn") || hostname.includes("fithou.edu.vn")))
 					api.stop(10, `Empty or invalid URL! Only *.fithou.net.vn or *.fithou.edu.vn are allowed.`, 400, { hostname });
 
@@ -96,11 +96,15 @@ const handleRequest = async (request, data, response) => {
 				if (headers["set-host"]) {
 					headers["host"] = headers["set-host"];
 					delete headers["set-host"];
+				} else if (raw) {
+					headers["host"] = hostname;
 				}
 
 				if (headers["set-origin"]) {
 					headers["origin"] = headers["set-origin"];
 					delete headers["set-origin"];
+				} else if (raw) {
+					headers["origin"] = `${protocol}//${hostname}`;
 				}
 
 				if (headers["set-referer"]) {
