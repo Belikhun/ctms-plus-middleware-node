@@ -55,6 +55,9 @@ const handleRequest = async (request, data, response) => {
 	try {
 		switch (requestURL.pathname) {
 			case "/api/middleware": {
+				if (request.method === "OPTIONS")
+					api.stop(0, "Options Request", 200);
+				
 				let url = api.reqQuery("url");
 				let raw = api.getQuery("raw", false);
 
@@ -75,9 +78,6 @@ const handleRequest = async (request, data, response) => {
 				let { hostname } = URL.parse(url, true);
 				if (!hostname || !(hostname.includes("fithou.net.vn") || hostname.includes("fithou.edu.vn")))
 					api.stop(10, `Empty or invalid URL! Only *.fithou.net.vn or *.fithou.edu.vn are allowed.`, 400, { hostname });
-				
-				if (request.method === "OPTIONS")
-					api.stop(0, "Options Request", 200);
 
 				let sessionCookieKey;
 				if (headers["session-cookie-key"]) {
